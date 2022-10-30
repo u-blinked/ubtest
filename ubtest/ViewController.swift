@@ -43,25 +43,47 @@ class FaceDetector {
         var transform = CGAffineTransform(scaleX: 1, y: -1)
         transform = transform.translatedBy(x: 0, y: -ciImageSize.height)
         
-        let features = detector.features(in: ciimage)
+        var features = detector.features(in: ciimage)
         
         // Apply the transform to convert the coordinates
-        var faceViewBounds = features[0].bounds.applying(transform)
         print(features)
-        print(features[0])
-        print(faceViewBounds)
+//        print(features[0])
+//        print(features.type)
+        var result : [CGRect] = []
+        for i in 0..<features.count{
+            print("dd")
+
+            var faceViewBounds = features[i].bounds.applying(transform)
+
+            // Calculate the actual position and size of the rectangle in the image view
+            let viewSize = imageView.bounds.size
+            let scale = min(viewSize.width / ciImageSize.width,
+                            viewSize.height / ciImageSize.height)
+            let offsetX = (viewSize.width - ciImageSize.width * scale) / 2
+            let offsetY = (viewSize.height - ciImageSize.height * scale) / 2
+
+            faceViewBounds = faceViewBounds.applying(CGAffineTransform(scaleX: scale, y: scale))
+            faceViewBounds.origin.x += offsetX
+            faceViewBounds.origin.y += offsetY
+
+            result.append(faceViewBounds)
+        }
         
-        // Calculate the actual position and size of the rectangle in the image view
-        let viewSize = imageView.bounds.size
-        let scale = min(viewSize.width / ciImageSize.width,
-                        viewSize.height / ciImageSize.height)
-        let offsetX = (viewSize.width - ciImageSize.width * scale) / 2
-        let offsetY = (viewSize.height - ciImageSize.height * scale) / 2
+//        var faceViewBounds = features[0].bounds.applying(transform)
+//
+//        // Calculate the actual position and size of the rectangle in the image view
+//        let viewSize = imageView.bounds.size
+//        let scale = min(viewSize.width / ciImageSize.width,
+//                        viewSize.height / ciImageSize.height)
+//        let offsetX = (viewSize.width - ciImageSize.width * scale) / 2
+//        let offsetY = (viewSize.height - ciImageSize.height * scale) / 2
+//
+//        faceViewBounds = faceViewBounds.applying(CGAffineTransform(scaleX: scale, y: scale))
+//        faceViewBounds.origin.x += offsetX
+//        faceViewBounds.origin.y += offsetY
         
-        faceViewBounds = faceViewBounds.applying(CGAffineTransform(scaleX: scale, y: scale))
-        faceViewBounds.origin.x += offsetX
-        faceViewBounds.origin.y += offsetY
+        print(result)
         
-        return faceViewBounds
+        return result[1]
     }
 }
