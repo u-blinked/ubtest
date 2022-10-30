@@ -47,6 +47,9 @@ class FaceDetector {
         
         // Apply the transform to convert the coordinates
         var faceViewBounds = features[0].bounds.applying(transform)
+        print(features)
+        print(features[0])
+        print(faceViewBounds)
         
         // Calculate the actual position and size of the rectangle in the image view
         let viewSize = imageView.bounds.size
