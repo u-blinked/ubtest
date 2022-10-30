@@ -17,11 +17,16 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         let faceDetector = FaceDetector()
-        let rect = faceDetector.getFaceRect(from: IV.image!, imageView: IV)
+        let result = faceDetector.getFaceRect(from: IV.image!, imageView: IV)
         
-        faceIndicatingView.frame = rect
-        faceIndicatingView.layer.borderColor = UIColor.red.cgColor
-        faceIndicatingView.layer.borderWidth = 2
+        for i in 0..<result.count {
+            let rect = result[i]
+            let faceView = UIView()
+            faceView.frame = rect
+            faceView.layer.borderColor = UIColor.red.cgColor
+            faceView.layer.borderWidth = 2
+            self.view.addSubview(faceView)
+        }
     }
 
 }
@@ -36,8 +41,8 @@ class FaceDetector {
         detector = CIDetector(ofType: CIDetectorTypeFace, context: context, options: opt)
     }
     
-    func getFaceRect(from image: UIImage, imageView: UIImageView) -> CGRect {
-        guard let ciimage = CIImage(image: image) else { return CGRect.zero }
+    func getFaceRect(from image: UIImage, imageView: UIImageView) -> [CGRect] {
+        guard let ciimage = CIImage(image: image) else { return [CGRect.zero] }
         
         let ciImageSize = ciimage.extent.size
         var transform = CGAffineTransform(scaleX: 1, y: -1)
@@ -84,6 +89,6 @@ class FaceDetector {
         
         print(result)
         
-        return result[1]
+        return result
     }
 }
